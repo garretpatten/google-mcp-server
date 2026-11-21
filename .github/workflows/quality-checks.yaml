@@ -1,0 +1,27 @@
+---
+name: 'Quality Checks'
+
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  quality-checks:
+    name: 'Linters'
+    # yamllint disable-line rule:line-length
+    uses: garretpatten/quality-checks/.github/workflows/quality-checks.yaml@55667a83c0bc24acc26878fcd4c59b9c1ddcb690 # master
+    with:
+      eslint_run: true
+      hadolint_run: false
+      jq_run: true
+      markdownlint_run: true
+      prettier_run: true
+      ruff_run: false
+      shellcheck_run: false
+      taplo_run: false
+      yamllint_run: true
+    # Pass only the secret the reusable workflow uses (secrets.token);
+    # `secrets: inherit` violates least privilege.
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
