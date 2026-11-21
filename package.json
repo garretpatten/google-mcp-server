@@ -1,7 +1,7 @@
 {
   "name": "google-mcp-server",
   "author": "Garret Patten",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Model Context Protocol server exposing Google Calendar and Google Tasks with read/write access over stdio",
   "private": true,
   "keywords": [
@@ -45,7 +45,7 @@
     "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^9.20.1",
     "globals": "^16.0.0",
-    "markdownlint-cli2": "^0.23.3",
+    "markdownlint-cli2": "^0.24.1",
     "prettier": "^3.7.3",
     "tsx": "^4.19.3",
     "typescript": "^5.9.0",
@@ -54,5 +54,13 @@
   },
   "allowScripts": {
     "esbuild@0.28.2": true
+  },
+  "overrides": {
+    "micromark-extension-math": {
+      "katex": "^0.18.2"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
+    }
   }
 }
