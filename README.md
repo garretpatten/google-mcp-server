@@ -22,13 +22,13 @@ authenticating with a published Google OAuth app.
 
 <p align="center">
   <a href="https://github.com/garretpatten/google-mcp-server/actions/workflows/tests.yaml"
-      ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/google-mcp-server/tests.yaml?branch=main&label=tests&logo=github&style=flat-square" alt="Tests workflow status"
+      ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/google-mcp-server/tests.yaml?branch=master&label=tests&logo=github&style=flat-square" alt="Tests workflow status"
   /></a>
   <a href="https://github.com/garretpatten/google-mcp-server/actions/workflows/quality-checks.yaml"
-      ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/google-mcp-server/quality-checks.yaml?branch=main&label=quality&logo=github&style=flat-square" alt="Quality checks workflow status"
+      ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/google-mcp-server/quality-checks.yaml?branch=master&label=quality&logo=github&style=flat-square" alt="Quality checks workflow status"
   /></a>
   <a href="https://github.com/garretpatten/google-mcp-server/actions/workflows/security-guardrails.yaml"
-      ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/google-mcp-server/security-guardrails.yaml?branch=main&label=security&logo=github&style=flat-square" alt="Security guardrails workflow status"
+      ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/google-mcp-server/security-guardrails.yaml?branch=master&label=security&logo=github&style=flat-square" alt="Security guardrails workflow status"
   /></a>
 </p>
 
