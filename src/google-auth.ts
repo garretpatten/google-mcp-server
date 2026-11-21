@@ -1,5 +1,5 @@
 import { createServer, Server } from 'node:http';
-import { readFileSync, writeFile } from 'node:fs';
+import { readFileSync, writeFile, chmodSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { randomBytes } from 'node:crypto';
 import type { GoogleOAuthCredentials } from './config.js';
@@ -24,6 +24,7 @@ export interface AccessTokenResult {
 export class GoogleAuthClient {
   private cachedAccessToken: string | null = null;
   private cachedExpiresAt: number = 0;
+  private refreshInFlight: Promise<string> | null = null;
 
   constructor(
     private readonly http: HttpClient,
@@ -34,7 +35,20 @@ export class GoogleAuthClient {
     if (this.cachedAccessToken && Date.now() < this.cachedExpiresAt) {
       return this.cachedAccessToken;
     }
+    // Single-flight: concurrent callers at expiry share one refresh request
+    // instead of racing several POSTs to the token endpoint.
+    if (this.refreshInFlight) {
+      return this.refreshInFlight;
+    }
+    this.refreshInFlight = this.refreshAccessToken();
+    try {
+      return await this.refreshInFlight;
+    } finally {
+      this.refreshInFlight = null;
+    }
+  }
 
+  private async refreshAccessToken(): Promise<string> {
     const body = new URLSearchParams({
       client_id: this.credentials.clientId,
       client_secret: this.credentials.clientSecret,
@@ -107,6 +121,8 @@ export class LoopbackRedirectListener implements RedirectListener {
         reject(new GoogleAuthError('Authorization listener has not been started'));
         return;
       }
+      // Drop handlers from any prior call so listeners never stack up.
+      this.server.removeAllListeners('request');
       const timer = setTimeout(() => {
         reject(new GoogleAuthError('Timed out waiting for Google authorization'));
       }, timeoutMs);
@@ -137,6 +153,9 @@ export class LoopbackRedirectListener implements RedirectListener {
     const server = this.server;
     this.server = null;
     if (server) {
+      // Keep-alive connections (e.g. from the browser) would otherwise keep
+      // close() waiting until they time out.
+      server.closeAllConnections();
       await new Promise<void>((resolve) => server.close(() => resolve()));
     }
   }
@@ -253,10 +272,18 @@ export async function saveEnvValue(key: string, value: string): Promise<void> {
   lines.push(`${key}="${value}"`);
 
   await new Promise<void>((resolve, reject) => {
-    writeFile(envFile, `${lines.join('\n').trimEnd()}\n`, (error) => {
+    // Owner-only permissions so the client secret and refresh token in .env
+    // are never readable by other users. No-op if the file already exists.
+    writeFile(envFile, `${lines.join('\n').trimEnd()}\n`, { mode: 0o600 }, (error) => {
       if (error) {
         reject(error);
       } else {
+        // mode only applies to newly created files, so tighten existing ones too.
+        try {
+          chmodSync(envFile, 0o600);
+        } catch {
+          // Leave permissions as-is if chmod fails; the content is still intact.
+        }
         resolve();
       }
     });

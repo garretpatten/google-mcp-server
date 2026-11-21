@@ -1,9 +1,6 @@
 import { GoogleApiBase } from './google-api.js';
+import type { AuthenticatedClient } from './google-api.js';
 import type { HttpClient } from './http.js';
-
-export interface AuthenticatedClient {
-  getAccessToken(): Promise<string>;
-}
 
 const API_ROOT = 'https://www.googleapis.com/calendar/v3';
 
@@ -141,7 +138,14 @@ export class GoogleCalendarClient extends GoogleApiBase {
     );
   }
 
-  /** Sets the authenticated user's response (RSVP) on an invitation. */
+  /**
+   * Sets the authenticated user's response (RSVP) on an invitation.
+   *
+   * The Calendar API can only replace the full attendees list, so this is a
+   * read-modify-write: an RSVP change made by another attendee between the GET
+   * and the PATCH is overwritten. `sendUpdates=all` notifies every attendee of
+   * the change, which is the expected behavior for an RSVP.
+   */
   async respond(
     calendarId: string,
     eventId: string,

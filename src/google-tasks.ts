@@ -1,6 +1,6 @@
 import { GoogleApiBase } from './google-api.js';
+import type { AuthenticatedClient } from './google-api.js';
 import type { HttpClient } from './http.js';
-import type { AuthenticatedClient } from './google-calendar.js';
 
 const API_ROOT = 'https://tasks.googleapis.com/tasks/v1';
 

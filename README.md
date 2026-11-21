@@ -131,8 +131,9 @@ opencode permission settings.
 ## Security
 
 OAuth credentials live in the git-ignored `.env`. The server refreshes access tokens
-automatically and never logs secrets. If the refresh token is revoked, run `npm run
-auth` again.
+automatically and never logs secrets. `npm run auth` writes `.env` with owner-only
+(0600) permissions; if you create the file by hand, run `chmod 600 .env`. If the
+refresh token is revoked, run `npm run auth` again.
 
 See [SECURITY.md](SECURITY.md) for reporting a vulnerability.
 

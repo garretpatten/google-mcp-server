@@ -1,6 +1,7 @@
 import type { HttpClient } from './http.js';
 
-export interface AuthenticatedGoogleClient {
+/** Anything that can supply a bearer token for Google API calls. */
+export interface AuthenticatedClient {
   getAccessToken(): Promise<string>;
 }
 
@@ -29,7 +30,7 @@ export class GoogleApiError extends Error {}
 export abstract class GoogleApiBase {
   constructor(
     protected readonly http: HttpClient,
-    protected readonly auth: AuthenticatedGoogleClient,
+    protected readonly auth: AuthenticatedClient,
   ) {}
 
   protected async getJson(url: string): Promise<Record<string, unknown>> {

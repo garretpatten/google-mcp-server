@@ -1,7 +1,7 @@
 {
   "name": "google-mcp-server",
   "author": "Garret Patten",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Model Context Protocol server exposing Google Calendar and Google Tasks with read/write access over stdio",
   "private": true,
   "keywords": [
