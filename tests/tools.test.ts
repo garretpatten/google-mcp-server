@@ -46,6 +46,40 @@ describe('buildTools', () => {
       expect(Object.keys(tool.inputSchema.properties).length).toBeGreaterThanOrEqual(0);
     }
   });
+
+  it('declares all four MCP annotations on every tool', () => {
+    const { tools } = makeTools();
+    for (const tool of tools) {
+      for (const hint of [
+        'readOnlyHint',
+        'destructiveHint',
+        'idempotentHint',
+        'openWorldHint',
+      ] as const) {
+        expect(typeof tool.annotations[hint], `${tool.name}.${hint}`).toBe('boolean');
+      }
+    }
+  });
+
+  it('marks read tools read-only, writes non-read-only, and every tool open-world', () => {
+    const { tools } = makeTools();
+    for (const tool of tools) {
+      expect(tool.annotations.openWorldHint).toBe(true);
+      expect(tool.annotations.readOnlyHint, tool.name).toBe(READ_TOOL_NAMES.has(tool.name));
+    }
+  });
+
+  it('marks delete tools destructive and create tools non-idempotent', () => {
+    const { tools } = makeTools();
+    for (const name of ['calendar_delete_event', 'tasks_delete']) {
+      const tool = tools.find((candidate) => candidate.name === name)!;
+      expect(tool.annotations.destructiveHint, name).toBe(true);
+    }
+    for (const name of ['calendar_create_event', 'tasks_create']) {
+      const tool = tools.find((candidate) => candidate.name === name)!;
+      expect(tool.annotations.idempotentHint, name).toBe(false);
+    }
+  });
 });
 
 describe('READ_TOOL_NAMES', () => {

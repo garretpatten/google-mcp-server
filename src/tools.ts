@@ -1,3 +1,4 @@
+import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js';
 import type { GoogleCalendarClient, EventInput } from './google-calendar.js';
 import type { GoogleTasksClient, TaskInput } from './google-tasks.js';
 
@@ -12,6 +13,8 @@ export interface ToolDefinition {
   name: string;
   description: string;
   inputSchema: JsonSchema;
+  /** MCP tool annotations; every tool declares all four hints explicitly. */
+  annotations: ToolAnnotations;
   handler: (args: Record<string, unknown>) => Promise<string>;
 }
 
@@ -226,6 +229,12 @@ export function buildTools(
         properties: {},
         additionalProperties: false,
       },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async () => {
         const calendars = await calendar.listCalendars();
         return JSON.stringify({ calendars }, null, 2);
@@ -253,6 +262,12 @@ export function buildTools(
         required: ['calendarId'],
         additionalProperties: false,
       },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const maxResults = optNumber(args, 'maxResults') ?? MAX_LIST_RESULTS;
         if (maxResults < 1 || maxResults > MAX_LIST_RESULTS) {
@@ -275,6 +290,12 @@ export function buildTools(
       name: 'calendar_event',
       description: 'Get full details of a single Google Calendar event.',
       inputSchema: schema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const event = await calendar.getEvent(str(args, 'calendarId'), str(args, 'eventId'));
         return JSON.stringify(event, null, 2);
@@ -288,6 +309,12 @@ export function buildTools(
       inputSchema: {
         ...eventSchema,
         required: ['calendarId', 'title'],
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
       },
       handler: async (args) => {
         const input = calendarEventInput(args);
@@ -309,6 +336,12 @@ export function buildTools(
         ...eventSchema,
         required: ['calendarId', 'eventId'],
       },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const event = await calendar.updateEvent(calendarEventInput(args));
         return JSON.stringify(trimEvent(event), null, 2);
@@ -318,6 +351,12 @@ export function buildTools(
       name: 'calendar_delete_event',
       description: 'Delete (cancel) a Google Calendar event.',
       inputSchema: schema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         await calendar.deleteEvent(str(args, 'calendarId'), str(args, 'eventId'));
         return JSON.stringify({ deleted: str(args, 'eventId') });
@@ -341,6 +380,12 @@ export function buildTools(
         },
         required: ['calendarId', 'eventId', 'response'],
         additionalProperties: false,
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
       },
       handler: async (args) => {
         const response = optEnum(args, 'response', [
@@ -370,6 +415,12 @@ export function buildTools(
         properties: {},
         additionalProperties: false,
       },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async () => {
         const lists = await tasks.listTaskLists();
         return JSON.stringify({ taskLists: lists }, null, 2);
@@ -397,6 +448,12 @@ export function buildTools(
         },
         required: ['listId'],
         additionalProperties: false,
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
       },
       handler: async (args) => {
         const maxResults = optNumber(args, 'maxResults') ?? MAX_LIST_RESULTS;
@@ -429,6 +486,12 @@ export function buildTools(
         required: ['listId', 'title'],
         additionalProperties: false,
       },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const task = await tasks.createTask(taskInput(args));
         return JSON.stringify(trimTask(task), null, 2);
@@ -454,6 +517,12 @@ export function buildTools(
         required: ['listId', 'taskId'],
         additionalProperties: false,
       },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const task = await tasks.updateTask(taskInput(args));
         return JSON.stringify(trimTask(task), null, 2);
@@ -463,6 +532,12 @@ export function buildTools(
       name: 'tasks_complete',
       description: 'Mark a Google Tasks task as completed.',
       inputSchema: taskRefSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const task = await tasks.updateTask({
           ...taskInput(args),
@@ -491,6 +566,12 @@ export function buildTools(
         required: ['listId', 'taskId'],
         additionalProperties: false,
       },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const listId = str(args, 'listId');
         const taskId = str(args, 'taskId');
@@ -506,6 +587,12 @@ export function buildTools(
       name: 'tasks_delete',
       description: 'Delete a task from a Google Tasks list.',
       inputSchema: taskRefSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       handler: async (args) => {
         const listId = str(args, 'listId');
         const taskId = str(args, 'taskId');

@@ -58,6 +58,9 @@ configuration on this machine and reuses the same OAuth app as
   - Create, update, complete, move, and delete tasks.
 - **Safe by default** — reads run without prompting; opencode asks before any write
   tool (create, update, delete, RSVP, move).
+- **Typed tool annotations** — every tool declares all four MCP hints
+  (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`), so hosts can
+  warn before destructive calls.
 - **Lightweight** — plain REST calls via `fetch` over stdio; no heavy Google client SDK.
 
 ## Quick start

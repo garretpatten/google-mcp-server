@@ -11,7 +11,7 @@ import { buildTools, ToolArgumentError } from './tools.js';
 import { describeApiError } from './google-api.js';
 
 const SERVER_NAME = 'google-mcp-server';
-const SERVER_VERSION = '0.1.1';
+const SERVER_VERSION = '0.1.2';
 
 export function buildServer(): Server {
   loadEnv();
@@ -33,6 +33,7 @@ export function buildServer(): Server {
       name: tool.name,
       description: tool.description,
       inputSchema: tool.inputSchema,
+      annotations: tool.annotations,
     })),
   }));
 
