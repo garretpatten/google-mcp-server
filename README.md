@@ -18,6 +18,9 @@ authenticating with a published Google OAuth app.
   <a href="./LICENSE"><img src="https://img.shields.io/github/license/garretpatten/google-mcp-server?style=flat-square" alt="License" /></a>
   <img src="https://img.shields.io/badge/transport-stdio-34A853?style=flat-square&logo=modelcontextprotocol&logoColor=white" alt="stdio transport" />
   <img src="https://img.shields.io/badge/runtime-node%20%3E%3D%2024-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js 24+" />
+  <a href="https://m8ven.ai/mcp/garretpatten-google-mcp-server-mq7att?s=readme"
+      ><img src="https://m8ven.ai/badge/mcp/garretpatten-google-mcp-server-mq7att?v=00b0ce5348d430c831630e677239d578" alt="M8ven Score"
+  /></a>
 </p>
 
 <p align="center">
